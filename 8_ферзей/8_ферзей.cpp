@@ -46,13 +46,103 @@ queen::queen(int col, queen* ngh) : column(col), neighbor(ngh)
 
 }
 
+bool queen::canAttack(int testRow, int testColumn)
+
+{
+
+	// проверка горизонталей
+
+	if (row == testRow)
+
+		return true;
+
+	// проверка диагоналей
+
+	int columnDifference = testColumn - column;
+
+	if ((row + columnDifference == testRow) || (row - columnDifference == testRow))
+
+		return true;
+
+	// попробовать соседа
+
+	return neighbor && neighbor->canAttack(testRow, testColumn);
+
+}
+
+bool queen::findSolution()
+
+{
+
+	while (neighbor && neighbor->canAttack(row, column))
+
+		if (!advance())
+
+			return false;
+
+
+
+	return true;
+
+}
+
+bool queen::advance()
+
+{
+
+	if (row < 8)
+
+	{
+
+		row++;
+
+		return findSolution();
+
+	}
+
+	if (neighbor && !neighbor->advance())
+
+		return false;
+
+	row = 1;
+
+	return findSolution();
+
+}
+
+void queen::print()
+
+{
+
+	if (neighbor)
+
+		neighbor->print();
+
+	cout << "column " << column << " row " << row << '\n';
+
+}
+
 
 
 
 void main()
 
 {
+	queen* lastQueen = 0;
 
+	for (int i = 1; i <= 8; i++)
+
+	{
+
+		lastQueen = new queen(i, lastQueen);
+
+		if (!lastQueen->findSolution())
+
+			cout << "no solution\n";
+
+	}
+
+	lastQueen->print();
 
 
 }
